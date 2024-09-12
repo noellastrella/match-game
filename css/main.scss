@@ -1,0 +1,36 @@
+main {
+  height: 100vh;
+}
+
+.hide {
+  display: none;
+}
+
+.cols {
+  border-radius: 1em;
+
+  #guess &,
+  #answers & {
+    border: 1px solid;
+  }
+
+  height: 100px;
+  width: 200px;
+  margin: 1em;
+}
+
+.dragme {
+  background: #c00;
+  width: 130px;
+  height: 50px;
+  border-radius: 1em;
+  border: 1px solid #ccc;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#answers.hideAnswers .dragme {
+  display: nones;
+}
