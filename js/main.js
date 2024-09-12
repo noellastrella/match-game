@@ -3,15 +3,14 @@
     var draggablesClone = [];
     let attempts = 0;
     let correct = 0;
+    let bestScore = "n/a";
     let previous;
   
     let answerRow = document.querySelector("#answers");
     let answers;
     
     document.querySelector("#restartGame").addEventListener("click", e=>{
-      if(!answerRow.classList.contains("hideAnswers")) {
-        answerRow.classList.add("hideAnswers");
-      } 
+      !answerRow.classList.contains("hideAnswers") && answerRow.classList.add("hideAnswers");
       
       resetState();
     });
@@ -22,9 +21,9 @@
       attempts++;
       correct = checkAnswers();
       
-      updateScores();
-      
       if(correct == total){
+        console.log(bestScore=="n/a" || bestScore > correct)
+        if(bestScore=="n/a" || bestScore > correct) bestScore = correct;
         if(answerRow.classList.contains("hideAnswers")) {
           answerRow.classList.remove("hideAnswers");
         } 
@@ -33,10 +32,11 @@
           answerRow.classList.add("hideAnswers");
         } 
       }
+      
+      updateScores();
     });
     
     function init(){
-  
       document.querySelectorAll("#guess .col").forEach((e)=>{
         e.addEventListener("drop", dropped);
         e.addEventListener("dragover", dragOver);
@@ -68,23 +68,19 @@
       .sort((a, b) => a.sort - b.sort)
       .map(({ value }) => value);
       
-      document.querySelectorAll("#guess .col").forEach((e,i)=>{
-          e.appendChild(draggables[i])
-      });
-      
-      document.querySelectorAll("#answers .col").forEach((e,i)=>{
-          e.appendChild(draggablesClone[i])
-      }); 
+      document.querySelectorAll("#guess .col").forEach((e,i)=>e.appendChild(draggables[i]))
+      document.querySelectorAll("#answers .col").forEach((e,i)=>e.appendChild(draggablesClone[i])); 
       
       answers = document.querySelectorAll("#answers .col .dragme");
+      
       if(checkAnswers(answers)>0)resetState();
     }
   
     function checkAnswers(){    
       let matches = 0;
-      console.log(answers)
+  
       document.querySelectorAll("#guess .col .dragme").forEach((e,i)=>{
-         if(e.dataset.val ==  answers[i].dataset.val) matches++;
+        if(e.dataset.val ==  answers[i].dataset.val) matches++;
       });
       
       return matches;
@@ -93,17 +89,9 @@
     function createSet(){
       draggables = [];
       
-      document.querySelectorAll("#guess .col").forEach((e,i)=>{
-        e.innerHTML = "";
-      })
-      
-      document.querySelectorAll("#answers .col").forEach((e,i)=>{
-        e.innerHTML = "";
-      })
-      
-      document.querySelectorAll("#guess .col").forEach((e,i)=>{
-        draggables[i] = createNew(i);
-      });
+      document.querySelectorAll("#guess .col").forEach(e=>e.innerHTML = "")
+      document.querySelectorAll("#answers .col").forEach(e=>e.innerHTML = "")
+      document.querySelectorAll("#guess .col").forEach((e,i)=>draggables[i] = createNew(i));
       
       updateScores();
     }
@@ -137,13 +125,8 @@
       e.stopPropagation();
     }
   
-    function dragOver(e){
-      e.preventDefault();
-    }
-  
-    function dragEnter(e){
-      e.preventDefault();  
-    }
+    const dragOver = (e) =>{ e.preventDefault() }
+    const dragEnter = (e) => { e.preventDefault() }
     
     function dragStart(e){
       e.dataTransfer.setData('text/plain', e.target.id);
@@ -154,6 +137,7 @@
     function updateScores(){
       document.querySelector("#attempts").innerText = attempts;
       document.querySelector("#correct").innerText = correct;
+      document.querySelector("#bestScore").innerText = bestScore;
     }
     
     init();  
