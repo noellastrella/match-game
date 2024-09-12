@@ -47,21 +47,22 @@
     }
     
     function resetState(){
+      attempts = 0;
+      correct = 0;
+  
       createSet();
       shuffle();
       updateScores();
     }
   
-    function shuffle(){
-      attempts = 0;
-      correct = 0;
-      
+    function shuffle(){    
       draggablesClone = [...draggables].map(e=>{
         return e.cloneNode(true);
       });
       
       draggablesClone = draggablesClone.map((e,i)=>{
         e.setAttribute('id', "answer-"+i);
+        e.classList.add('noDrag');
         return e;
       })
       .map(value => ({ value, sort: Math.random() }))
@@ -97,18 +98,19 @@
     }
   
     function createNew(num){
-      let randomColor = Math.floor(Math.random()*16777215).toString(16);
-      let el = document.createElement("div");
-  
-      el.setAttribute('draggable', "true");
-      el.setAttribute('id', "drag-"+num);
-      el.setAttribute('data-val', num);
-      el.classList.add("dragme");
-      el.innerHTML ="Drag Me" + num;
-      el.setAttribute("style", "background: #" + randomColor);  
-      
-      el.addEventListener("dragstart", dragStart);
-      return el;
+        let randomColor = Math.floor(Math.random()*16777215).toString(16);
+        let el = document.createElement("div");
+    
+        el.setAttribute('draggable', "true");
+        el.setAttribute('id', "drag-"+num);
+        el.setAttribute('data-val', num);
+        el.classList.add("dragme");
+        //el.innerHTML ="Drag Me" + num;
+        el.setAttribute("style", `background-image:
+  url('data:image/svg+xml;utf8,<svg width="100px" height="100px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" ><path fill="%23${randomColor}" d="M14,7.59V4a1,1,0,0,0-1-1H11a1,1,0,0,0-1,1V7.59A3.41,3.41,0,0,1,9,10H9a3.41,3.41,0,0,0-1,2.41V20a1,1,0,0,0,1,1h6a1,1,0,0,0,1-1V12.41A3.41,3.41,0,0,0,15,10h0A3.41,3.41,0,0,1,14,7.59Z" style=" stroke-width: 1;"></path><path d="M14,7.59V4a1,1,0,0,0-1-1H11a1,1,0,0,0-1,1V7.59A3.41,3.41,0,0,1,9,10H9a3.41,3.41,0,0,0-1,2.41V20a1,1,0,0,0,1,1h6a1,1,0,0,0,1-1V12.41A3.41,3.41,0,0,0,15,10h0A3.41,3.41,0,0,1,14,7.59Z" style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; stroke-width: .75;"></path></svg>');`);  
+        
+        el.addEventListener("dragstart", dragStart);
+        return el;
     }
     
     function dropped(e){
@@ -118,6 +120,8 @@
       if(e.target.classList.contains("dragme")){
         target = e.target.parentNode;
       }
+      
+      console.log(target, previous)
   
       target.appendChild(previous);
       previousCol.appendChild(target.children[0])
@@ -132,6 +136,8 @@
       e.dataTransfer.setData('text/plain', e.target.id);
       previous = e.target;
       previousCol = e.target.parentNode;
+      
+      console.log("PREV", previous, previousCol)
     }
     
     function updateScores(){
